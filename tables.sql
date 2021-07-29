@@ -1,9 +1,8 @@
 CREATE TABLE Players (
     PlayerID int NOT NULL AUTO_INCREMENT,
-    DisplayName varchar(255) NOT NULL,
+    DisplayName varchar(255) NULL,
     LoginName varchar(255) NOT NULL,
     PassHash varchar(255) NOT NULL,
-    PassSalt varchar(255) NOT NULL,
     PRIMARY KEY (PlayerID)
 );
 

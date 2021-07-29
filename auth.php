@@ -12,21 +12,26 @@ if (empty($_SERVER['PHP_AUTH_DIGEST'])) {
     header('HTTP/1.1 401 Unauthorized');
     header('WWW-Authenticate: Digest realm="'.$realm.
            '",qop="auth",nonce="'.uniqid().'",opaque="'.md5($realm).'"');
-
     die('Text to send if user hits Cancel button');
 }
 
 
 // analyze the PHP_AUTH_DIGEST variable
-if (!($data = http_digest_parse($_SERVER['PHP_AUTH_DIGEST'])) ||
-    !isset($users[$data['username']])) {
-        header('HTTP/1.1 401 Unauthorized');
+if (!($data = http_digest_parse($_SERVER['PHP_AUTH_DIGEST']))) {
+    header('HTTP/1.1 401 Unauthorized');
     die('Wrong Credentials!');
 }
 
+$myUserInfo = fetch_user_by_login_name($data['username']);
+
+if(!$myUserInfo) {
+    header('HTTP/1.1 401 Unauthorized');
+    die('Wrong Credentials!');
+}
 
 // generate the valid response
-$A1 = md5($data['username'] . ':' . $realm . ':' . $users[$data['username']]);
+//$A1 = md5($data['username'] . ':' . $realm . ':' . $users[$data['username']]);
+$A1 = $myUserInfo["PassHash"];
 $A2 = md5($_SERVER['REQUEST_METHOD'].':'.$data['uri']);
 $valid_response = md5($A1.':'.$data['nonce'].':'.$data['nc'].':'.$data['cnonce'].':'.$data['qop'].':'.$A2);
 
@@ -54,5 +59,19 @@ function http_digest_parse($txt)
     return $needed_parts ? false : $data;
 }
 
-
+function fetch_user_by_login_name($login_name)
+{
+    $getUserQuery = $mysqli->prepare("SELECT PlayerID, DisplayName, PassHash, PassSalt FROM Players WHERE LoginName=? LIMIT 1");
+    $getUserQuery->bind_param("s", $login_name);
+    $getUserQuery->execute();
+    $getUserQuery->bind_result($player_id, $display_name, $pass_hash, $pass_salt);
+    if($getUserQuery->fetch()) {
+        return array('PlayerID'=>$player_id,
+            'LoginName'=>$login_name,
+            'DisplayName'=>$display_name,
+            'PassHash'=>$pass_hash);
+    } else {
+        return null;
+    }
+}
 ?>
