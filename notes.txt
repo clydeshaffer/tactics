@@ -1,0 +1,30 @@
+Tank Tactics API -
+
+Data structurs:
+    GAME STATE
+        PLAYER STATE []
+
+    PLAYER STATE
+        ID
+        X
+        Y
+        HP
+        AP
+        Display Name
+
+Interface:
+    Get map -> all player states
+    Move (myID, X, Y)
+        -> Consume action point and update X Y
+        OR -> report move is invalid because of range or number of AP available, or square is occupied, or you're already dead
+        OR -> not logged in lol
+    Attack (myID, enemyID)
+        -> Consume action point and enemy health
+        OR -> report attack is invalid because of range, AP, or enemy already dead, or you're already dead
+        OR -> not logged in lol
+
+    Give (myID, "friend"ID)
+        -> Consume action point and increment theirs
+        OR -> report back that you're dead, they're dead, or you don't have AP
+    Vote (myID, voteTargetID)
+        -> set current vote target to give an extra point to at the next AP distribution
