@@ -2,17 +2,21 @@
 
 include 'conn.php';
 
-$sql = "SELECT * FROM GameStates";
+$sql = "SELECT * FROM GameSessions";
 
 $result = $conn->query($sql);
 
-if ($result->num_rows > 0) {
-  // output data of each row
-  while($row = $result->fetch_assoc()) {
-    echo $row;
+if($result) {
+  echo $result->num_rows;
+  echo "\n";
+  if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+      echo json_encode($row);
+      echo "\n";
+    }
   }
-} else {
-  echo "0 results";
 }
 $conn->close();
+
 ?>
