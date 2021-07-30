@@ -61,10 +61,11 @@ function http_digest_parse($txt)
 
 function fetch_user_by_login_name($login_name)
 {
-    $getUserQuery = $mysqli->prepare("SELECT PlayerID, DisplayName, PassHash, PassSalt FROM Players WHERE LoginName=? LIMIT 1");
+    global $conn;
+    $getUserQuery = $conn->prepare("SELECT PlayerID, DisplayName, PassHash FROM Players WHERE LoginName=? LIMIT 1");
     $getUserQuery->bind_param("s", $login_name);
     $getUserQuery->execute();
-    $getUserQuery->bind_result($player_id, $display_name, $pass_hash, $pass_salt);
+    $getUserQuery->bind_result($player_id, $display_name, $pass_hash);
     if($getUserQuery->fetch()) {
         return array('PlayerID'=>$player_id,
             'LoginName'=>$login_name,

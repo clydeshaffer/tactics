@@ -9,7 +9,7 @@ $users = array('admin' => 'mypass', 'guest' => 'guest');
 
 
 if (!isset($_SERVER['PHP_AUTH_USER'])) {
-    header('WWW-Authenticate: Basic realm="My Realm"');
+    header('WWW-Authenticate: Basic realm="'.$realm.'"');
     header('HTTP/1.0 401 Unauthorized');
     echo 'Text to send if user hits Cancel button';
     exit;
@@ -22,18 +22,16 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
         die('Login name is taken');
     }
 
-    if(create_user($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'])) {
-        echo 'Account created';
-    } else {
-        header('HTTP/1.1 401 Unauthorized');
-        die('Could not create user');
-    }
+    create_user($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
+    header('HTTP/1.1 401 Unauthorized');
+    die('Created user');
     
 }
 
 function fetch_user_by_login_name($login_name)
 {
-    $getUserQuery = $mysqli->prepare("SELECT PlayerID, DisplayName, PassHash, PassSalt FROM Players WHERE LoginName=? LIMIT 1");
+    global $conn;
+    $getUserQuery = $conn->prepare("SELECT PlayerID, DisplayName, PassHash FROM Players WHERE LoginName=? LIMIT 1");
     $getUserQuery->bind_param("s", $login_name);
     $getUserQuery->execute();
     $getUserQuery->bind_result($player_id, $display_name, $pass_hash, $pass_salt);
@@ -49,11 +47,12 @@ function fetch_user_by_login_name($login_name)
 
 function create_user($login_name, $password)
 {
-    $makeUserQuery = $mysqli->prepare("INSERT INTO Players (LoginName, PassHash) VALUES (?, ?)");
-    $A1 = md5($data['username'] . ':' . $realm . ':' . $users[$data['username']]);
+    global $conn, $realm;
+    $makeUserQuery = $conn->prepare("INSERT INTO Players (LoginName, PassHash) VALUES (?, ?)");
+    $A1 = md5($login_name . ':' . $realm . ':' . $password);
     $makeUserQuery->bind_param("ss", $login_name, $A1);
     $makeUserQuery->execute();
-    return $getUserQuery->fetch();
+    return $makeUserQuery->fetch();
 }
 
 ?>
