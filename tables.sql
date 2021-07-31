@@ -30,7 +30,8 @@ CREATE TABLE Tank (
     PRIMARY KEY (TankID),
     FOREIGN KEY (Player) REFERENCES Players(PlayerID),
     FOREIGN KEY (Game) REFERENCES GameSessions(GameSessionID),
-    UNIQUE KEY unique_position(X, Y, Game)
+    UNIQUE KEY unique_position(X, Y, Game),
+    UNIQUE KEY unique_tank_per_game(Player, Game)
 );
 
 CREATE TABLE Message (

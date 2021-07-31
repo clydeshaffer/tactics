@@ -23,8 +23,8 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
     }
 
     create_user($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
-    header('HTTP/1.1 401 Unauthorized');
-    die('Created user');
+    header("Status: 303 See Other");
+    header('Location: index.php');
     
 }
 
