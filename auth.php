@@ -4,10 +4,6 @@ include_once 'crud.php';
 
 $realm = 'TankTactics';
 
-//user => password
-$users = array('admin' => 'mypass', 'guest' => 'guest');
-
-
 if (empty($_SERVER['PHP_AUTH_DIGEST'])) {
     header('HTTP/1.1 401 Unauthorized');
     header('WWW-Authenticate: Digest realm="'.$realm.
