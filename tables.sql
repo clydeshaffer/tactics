@@ -3,7 +3,8 @@ CREATE TABLE Players (
     DisplayName varchar(255) NULL,
     LoginName varchar(255) NOT NULL,
     PassHash varchar(255) NOT NULL,
-    PRIMARY KEY (PlayerID)
+    PRIMARY KEY (PlayerID),
+    UNIQUE KEY unique_login (LoginName)
 );
 
 CREATE TABLE GameSessions (
@@ -24,10 +25,12 @@ CREATE TABLE Tank (
     X int NOT NULL,
     Y int NOT NULL,
     HP int NOT NULL DEFAULT 3,
-    AP int NOT NULL DEFAULT 0,
+    ExtraAP int NOT NULL DEFAULT 0,
+    SpentAP int NOT NULL DEFAULT 0,
     PRIMARY KEY (TankID),
     FOREIGN KEY (Player) REFERENCES Players(PlayerID),
-    FOREIGN KEY (Game) REFERENCES GameSessions(GameSessionID)
+    FOREIGN KEY (Game) REFERENCES GameSessions(GameSessionID),
+    UNIQUE KEY unique_position(X, Y, Game)
 );
 
 CREATE TABLE Message (

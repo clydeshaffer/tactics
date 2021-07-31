@@ -1,6 +1,6 @@
 <?php
 
-include_once 'conn.php';
+include_once 'crud.php';
 
 $realm = 'TankTactics';
 
@@ -57,22 +57,5 @@ function http_digest_parse($txt)
     }
 
     return $needed_parts ? false : $data;
-}
-
-function fetch_user_by_login_name($login_name)
-{
-    global $conn;
-    $getUserQuery = $conn->prepare("SELECT PlayerID, DisplayName, PassHash FROM Players WHERE LoginName=? LIMIT 1");
-    $getUserQuery->bind_param("s", $login_name);
-    $getUserQuery->execute();
-    $getUserQuery->bind_result($player_id, $display_name, $pass_hash);
-    if($getUserQuery->fetch()) {
-        return array('PlayerID'=>$player_id,
-            'LoginName'=>$login_name,
-            'DisplayName'=>$display_name,
-            'PassHash'=>$pass_hash);
-    } else {
-        return null;
-    }
 }
 ?>
